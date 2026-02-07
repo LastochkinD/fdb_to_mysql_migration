@@ -74,6 +74,12 @@ class Migrator:
             self.mysql.create_database(mysql_config["database"])
             self.mysql.use_database(mysql_config["database"])
 
+        # Удаление всех существующих таблиц если настроено
+        if self.migration_config.get("drop_tables", False) or self.drop_tables:
+            print("Удаление всех существующих таблиц...")
+            dropped_count = self.mysql.drop_all_tables()
+            print(f"✓ Удалено таблиц: {dropped_count}")
+
     def disconnect(self) -> None:
         """Закрытие соединений"""
         if self.firebird:
@@ -113,11 +119,6 @@ class Migrator:
 
             # Преобразование первичного ключа
             pk_columns_lower = [self._to_lower(pk) for pk in pk_columns] if pk_columns else None
-
-            # Удаление таблицы если настроено
-            if self.migration_config.get("drop_tables", False) or self.drop_tables:
-                print(f"  Удаление существующей таблицы...")
-                self.mysql.drop_table(table_name_lower)
 
             # Создание таблицы
             print(f"  Создание таблицы...")

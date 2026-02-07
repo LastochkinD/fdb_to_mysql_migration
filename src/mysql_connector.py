@@ -174,3 +174,47 @@ class MySQLConnector:
         cursor.close()
         
         return count
+
+    def get_all_tables(self) -> List[str]:
+        """Получение списка всех таблиц в текущей базе данных"""
+        if not self.connection or not self.connection.is_connected():
+            self.connect()
+        
+        cursor = self.connection.cursor()
+        cursor.execute("SHOW TABLES")
+        tables = [t[0] for t in cursor.fetchall()]
+        cursor.close()
+        
+        return tables
+
+    def drop_all_tables(self) -> int:
+        """
+        Удаление всех таблиц в текущей базе данных
+
+        Returns:
+            Количество удалённых таблиц
+        """
+        if not self.connection or not self.connection.is_connected():
+            self.connect()
+        
+        # Получаем все таблицы
+        tables = self.get_all_tables()
+        
+        if not tables:
+            return 0
+        
+        # Удаляем все таблицы (с FOREIGN KEY CHECKS = 0 для избежания ошибок)
+        cursor = self.connection.cursor()
+        
+        # Отключаем проверку внешних ключей
+        cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
+        
+        for table in tables:
+            cursor.execute(f"DROP TABLE IF EXISTS `{table}`")
+        
+        # Включаем проверку обратно
+        cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
+        
+        cursor.close()
+        
+        return len(tables)
