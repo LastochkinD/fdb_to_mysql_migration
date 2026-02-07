@@ -63,3 +63,5 @@ data/
 config.ini
 secrets.json
 *.key
+
+*.fdb

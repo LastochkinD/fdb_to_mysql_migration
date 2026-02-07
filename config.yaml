@@ -1,0 +1,26 @@
+# Конфигурация миграции Firebird -> MySQL
+
+# Источник (Firebird)
+firebird:
+  host: "localhost"
+  port: 3050
+  database: "F:/Projects/fdb_to_mysql_migration/DB_.FDB"
+  user: "SYSDBA"
+  password: "masterkey"
+  charset: "UTF8"
+
+# Цель (MySQL)
+mysql:
+  host: "192.168.88.165"
+  port: 3306
+  database: "avtocom_db"
+  user: "avtocom_admin"
+  password: "t4i.WQ5*/Nr_NA/."
+  charset: "utf8mb4"
+
+# Настройки миграции
+migration:
+  batch_size: 1000  # Количество записей для пакетной вставки
+  drop_tables: false  # Удалять существующие таблицы перед миграцией
+  transfer_data: true  # Переносить данные
+  transfer_structure: true  # Переносить структуру
